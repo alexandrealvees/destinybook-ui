@@ -4,6 +4,7 @@ import DataGridComponent from "../components/DataGridComponent";
 import { Button, Grid, Paper } from "@mui/material";
 import { paperStyle, buttonStyle } from "../utils";
 import AddClientTable from "../components/AddClientTable";
+import axios from "axios";
 
 
 export default function Clientes() {
@@ -15,7 +16,11 @@ export default function Clientes() {
     };
 
     const handleRowClick = (params) => {
+        setSelectedRow(params.row);
         console.log(params.row);
+        axios.post("http://localhost:8080/clientes", params.row).then((response) => {
+            console.log(response);
+        });
     };
 
     return (
