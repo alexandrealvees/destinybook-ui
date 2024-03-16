@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Navbar from "../components/Navbar";
 import DataGridComponent from "../components/DataGridComponent";
 import { Button, Grid, Paper } from "@mui/material";
@@ -10,6 +10,11 @@ import axios from "axios";
 export default function Clientes() {
     const [ addClient, setAddClient ] = React.useState(false);
     const [ selectedRow, setSelectedRow ] = React.useState({});
+    const [ rows, setRows ] = React.useState([]);
+
+    useEffect(() => {
+        fetchClients();
+    }, []);
 
     const createClient = () => {
         setAddClient(true);
@@ -18,10 +23,34 @@ export default function Clientes() {
     const handleRowClick = (params) => {
         setSelectedRow(params.row);
         console.log(params.row);
-        axios.post("http://localhost:8080/clientes", params.row).then((response) => {
-            console.log(response);
-        });
     };
+
+    const fetchClients = async () => {
+        try {
+            const response = await axios.get("http://localhost:5000/clientes");
+            setRows(response.data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const putClient = async () => {
+        try {
+            const response = await axios.put("http://localhost:5000/clientes", selectedRow);
+            console.log(response);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const deleteClient = async () => {
+        try {
+            const response = await axios.delete("http://localhost:5000/clientes", selectedRow);
+            console.log(response);
+        } catch (error) {
+            console.error(error);
+        }
+    }
 
     return (
         <React.Fragment>
@@ -48,12 +77,22 @@ export default function Clientes() {
                                 </Grid>
                                 <Grid item xs={4}>
                                     <Grid container justifyContent={"center"}>
-                                        <Button sx={buttonStyle}>Remover Cliente</Button>
+                                        <Button
+                                            sx={buttonStyle}
+                                            onClick={() => {
+                                                deleteClient();
+                                            }}
+                                        >Remover Cliente</Button>
                                     </Grid>
                                 </Grid>
                                 <Grid item xs={4}>
                                     <Grid container justifyContent={"center"}>
-                                        <Button sx={buttonStyle}>Editar Cliente</Button>
+                                        <Button
+                                            sx={buttonStyle}
+                                            onClick={() => {
+                                                putClient();
+                                            }}
+                                        >Editar Cliente</Button>
                                     </Grid>
                                 </Grid>
                             </Grid>
@@ -69,7 +108,7 @@ export default function Clientes() {
             { addClient &&
                 <Grid container justifyContent={"center"} sx={{marginTop: "8px"}}>
                     <Paper sx={paperStyle}>
-                        <AddClientTable />
+                        <AddClientTable/>
                     </Paper>
                 </Grid>
             }

@@ -1,12 +1,14 @@
 import React from 'react';
 import { Grid, TextField, Button, FormControl } from '@mui/material';
 import { buttonStyle } from '../utils';
+import axios from 'axios';
 
-export default function AddClientTable() {
+export default function AddClientTable(props) {
     const handleSubmit = (event) => {
         event.preventDefault();
-        const formData = new FormData(event.currentTarget);
-        console.log({
+        const formData = new FormData(event.target);
+        console.log(formData);
+        let data = {
             nomeCompleto: formData.get('nomeCompleto'),
             paisOrigem: formData.get('paisOrigem'),
             cpf: formData.get('cpf'),
@@ -15,8 +17,10 @@ export default function AddClientTable() {
             endereco: formData.get('endereco'),
             telefone: formData.get('telefone'),
             email: formData.get('email')
+        };
+        axios.post("http://localhost:8080/clientes", data).then((response) => {
+            console.log(response);
         });
-        // Aqui você pode adicionar o código para enviar esses dados ao seu backend
     };
 
     return (
@@ -189,7 +193,9 @@ export default function AddClientTable() {
                             />
                         </FormControl>
                         <Grid container justifyContent={"center"}>
-                            <Button sx={buttonStyle}>
+                            <Button 
+                                sx={buttonStyle}
+                                type="submit">
                                 Adicionar Cliente
                             </Button>
                         </Grid>
